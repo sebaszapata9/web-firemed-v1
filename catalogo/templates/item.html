@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ item.nombre }} - TodoTech SAC{% endblock %}
+
+{% block content %}
+<div class="container product-detail-container">
+    <!-- Enlace de retorno -->
+    <div class="breadcrumb">
+        <a href="{% url 'lista_items' %}">&larr; Volver al Catálogo</a>
+    </div>
+
+    <div class="product-detail-grid">
+        <!-- Columna Izquierda: Imagen del Producto -->
+        <div class="product-image-wrapper">
+            {% if item.imagen %}
+                <img src="{{ item.imagen.url }}" alt="{{ item.nombre }}" class="product-main-img">
+            {% else %}
+                <div class="no-image-placeholder">
+                    <span>Imagen no disponible</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Columna Derecha: Información y Acciones -->
+        <div class="product-info-wrapper">
+            <span class="marca-tag">{{ item.marca }}</span>
+            <h1 class="product-detail-title">{{ item.nombre }}</h1>
+            
+            <div class="product-pricing">
+                <span class="price-label">Precio:</span>
+                <span class="price-value">S/ {{ item.precio }}</span>
+            </div>
+
+            <div class="stock-status">
+                {% if item.stock_activo and item.stock > 0 %}
+                    <span class="badge active">Stock disponible: {{ item.stock }} unidades</span>
+                {% else %}
+                    <span class="badge inactive">Producto Agotado</span>
+                {% endif %}
+            </div>
+
+            <div class="product-description-box">
+                <h3>Descripción del Equipo</h3>
+                <p>{{ item.descripcion }}</p>
+            </div>
+
+            {% if item.ficha_tecnica %}
+                <div class="tech-sheet">
+                    <a href="{{ item.ficha_tecnica.url }}" target="_blank" class="btn-tech">📄 Descargar Ficha Técnica (PDF)</a>
+                </div>
+            {% endif %}
+
+
+            <!-- Botón de acción: WhatsApp Personalizado -->
+            <div class="actions-wrapper">
+                <a href="https://wa.me/{{ data_negocio.telefono|default:'51987654321' }}?text=Hola%2C%20estoy%20interesado%20en%20el%20producto%3A%20{{ item.nombre|urlencode }}" 
+                    target="_blank" 
+                    class="btn-whatsapp-action">
+                    Consultar por WhatsApp 💬
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-detail-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+    
+    .breadcrumb { margin-bottom: 1.5rem; }
+    .breadcrumb a { text-decoration: none; color: var(--brand-teal-main); font-weight: 600; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--brand-teal-dark); }
+
+    .product-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; background: var(--white); padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(4,4,4,0.05); align-items: start; }
+    
+    .product-main-img { width: 100%; max-height: 450px; object-fit: contain; border-radius: 8px; border: 1px solid var(--gray-border); background: #fafafa; padding: 1rem; }
+    .no-image-placeholder { width: 100%; height: 350px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #64748b; font-weight: 500; }
+
+    .marca-tag { display: inline-block; background: var(--brand-gray); color: var(--brand-teal-dark); font-size: 0.8rem; font-weight: bold; padding: 0.3rem 0.75rem; border-radius: 4px; text-transform: uppercase; margin-bottom: 1rem; }
+    .product-detail-title { font-size: 2rem; color: var(--brand-black); margin-bottom: 1.25rem; font-weight: 700; line-height: 1.2; }
+    
+    .product-pricing { margin-bottom: 1rem; display: flex; align-items: baseline; gap: 0.5rem; }
+    .price-label { font-size: 1rem; color: #6b7280; }
+    .price-value { font-size: 2rem; font-weight: bold; color: var(--brand-teal-dark); }
+
+    .stock-status { margin-bottom: 1.5rem; }
+    .badge { font-size: 0.9rem; padding: 0.3rem 0.75rem; border-radius: 4px; font-weight: 500; }
+    .badge.active { background: #dcfce7; color: var(--success); }
+    .badge.inactive { background: #fee2e2; color: var(--danger); }
+
+    .product-description-box { margin-bottom: 2rem; }
+    .product-description-box h3 { font-size: 1.1rem; color: var(--brand-teal-dark); margin-bottom: 0.5rem; }
+    .product-description-box p { color: #4b5563; font-size: 0.95rem; line-height: 1.7; white-space: pre-line; }
+
+    .tech-sheet { margin-bottom: 1.5rem; }
+    .btn-tech { display: inline-block; background-color: #f1f5f9; color: var(--brand-black); padding: 0.6rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 500; border: 1px solid var(--gray-border); transition: background-color 0.2s; }
+    .btn-tech:hover { background-color: #e2e8f0; }
+
+    .actions-wrapper { margin-top: 2rem; }
+    .btn-whatsapp-action { display: block; text-align: center; background-color: #25d366; color: white; padding: 0.85rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 1.05rem; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2); }
+    .btn-whatsapp-action:hover { background-color: #20ba5a; transform: translateY(-2px); }
+
+    /* Responsividad para celulares */
+    @media (max-width: 768px) {
+        .product-detail-grid { grid-template-columns: 1fr; gap: 1.5rem; padding: 1.5rem; }
+        .product-detail-title { font-size: 1.5rem; }
+    }
+</style>
+{% endblock %}

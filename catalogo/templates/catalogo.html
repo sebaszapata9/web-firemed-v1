@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo de Laptops - TodoTech SAC{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Frases comerciales introductorias -->
+    <div class="catalog-banner">
+        <h1>Potencia tu Rendimiento Diario</h1>
+        <p>Descubre nuestra selección exclusiva de laptops de alta gama diseñadas para elevar tu productividad personal y corporativa al siguiente nivel.</p>
+    </div>
+
+    <!-- Botones de Filtro por Categoría (Conectados al modelo mediante la URL) -->
+    <div class="category-filters">
+        <a href="{% url 'lista_items' %}" class="filter-btn {% if not categoria_actual %}active{% endif %}">Todos</a>
+        <a href="{% url 'lista_items' %}?categoria=estudiante" class="filter-btn {% if categoria_actual == 'estudiante' %}active{% endif %}">Gama Estudiante / Oficina</a>
+        <a href="{% url 'lista_items' %}?categoria=gaming" class="filter-btn {% if categoria_actual == 'gaming' %}active{% endif %}">Gama Gaming / Alto Rendimiento</a>
+        <a href="{% url 'lista_items' %}?categoria=profesional" class="filter-btn {% if categoria_actual == 'profesional' %}active{% endif %}">Gama Creativa / Edición</a>
+    </div>
+
+    <!-- Controles de búsqueda en tiempo real -->
+    <div class="catalog-controls">
+        <div class="controls-info">
+            <h2>Laptops Disponibles</h2>
+            <p>Encuentra el equipo ideal según tus necesidades tecnológicas.</p>
+        </div>
+        <input type="text" id="searchInput" class="search-box" placeholder="Buscar por marca o modelo...">
+    </div>
+
+    <!-- Rejilla de Productos -->
+    <div class="grid" id="productGrid">
+        {% for item in items %}
+            {% if item.stock_activo and item.stock > 0 %}
+                <div class="product-card" data-name="{{ item.nombre|lower }}" data-marca="{{ item.marca|lower }}">
+                    <div class="product-body">
+                        <span class="marca-tag">{{ item.marca }}</span>
+                        <h2 class="product-title">{{ item.nombre }}</h2>
+                        <p class="product-desc">{{ item.descripcion }}</p>
+                        <a href="{% url 'detalle_item' slug=item.slug %}" class="btn-detalle">Ver Detalle</a>
+                    </div>
+                    <div class="product-footer">
+                        <span class="price">S/ {{ item.precio }}</span>
+                        <span class="badge active">Stock: {{ item.stock }}</span>
+                    </div>
+                </div>
+            {% endif %}
+        {% empty %}
+        <div class="empty-state">
+            <p>🚀 ¡Pronto tendremos más novedades! No hay laptops disponibles en este momento, pero puedes consultar con nuestro equipo de ventas para próximas reposiciones.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+    
+    .catalog-banner { background: linear-gradient(135deg, var(--brand-teal-dark), var(--brand-teal-main)); color: var(--white); padding: 2.5rem 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center; }
+    .catalog-banner h1 { font-size: 2.25rem; margin-bottom: 0.5rem; font-weight: 700; }
+    .catalog-banner p { font-size: 1.1rem; opacity: 0.95; max-width: 700px; margin: 0 auto; }
+
+    /* Estilos para los botones de categorías */
+    .category-filters { margin-bottom: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .filter-btn { padding: 0.5rem 1.25rem; border-radius: 20px; background: var(--white); color: var(--text-main, #1f2937); border: 1px solid var(--gray-border); text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: all 0.2s; }
+    .filter-btn:hover { border-color: var(--brand-teal-light); color: var(--brand-teal-main); }
+    .filter-btn.active { background: var(--brand-teal-main); color: var(--white); border-color: var(--brand-teal-main); }
+
+    .catalog-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; background: var(--white); padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(4,4,4,0.02); }
+    .controls-info h2 { font-size: 1.25rem; color: var(--brand-teal-dark); }
+    .controls-info p { font-size: 0.85rem; color: #6b7280; }
+    
+    .search-box { padding: 0.6rem 1rem; width: 280px; border: 1px solid var(--gray-border); border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+    .search-box:focus { border-color: var(--brand-teal-light); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .product-card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(4,4,4,0.03); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; border-top: 4px solid var(--brand-teal-light); }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 6px 12px rgba(4,4,4,0.08); }
+    
+    .product-body { padding: 1.5rem; }
+    .marca-tag { display: inline-block; background: var(--brand-gray); color: var(--brand-teal-dark); font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.6rem; border-radius: 4px; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .product-title { font-size: 1.15rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--brand-black); }
+    
+    .product-desc { 
+        font-size: 0.9rem; 
+        color: #4b5563; 
+        margin-bottom: 1rem; 
+        display: -webkit-box; 
+        line-clamp: 3; 
+        -webkit-line-clamp: 3; 
+        -webkit-box-orient: vertical; 
+        overflow: hidden; 
+    }
+    
+    .btn-detalle { display: inline-block; background-color: var(--brand-teal-light); color: var(--white); padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: background-color 0.2s; }
+    .btn-detalle:hover { background-color: var(--brand-teal-main); }
+
+    .product-footer { padding: 1rem 1.5rem; background: #fafafa; border-top: 1px solid var(--gray-border); display: flex; justify-content: space-between; align-items: center; }
+    .price { font-size: 1.25rem; font-weight: bold; color: var(--brand-teal-dark); }
+    .badge { font-size: 0.85rem; padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 500; }
+    .badge.active { background: #dcfce7; color: var(--success); }
+
+    .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--white); border-radius: 8px; color: #6b7280; font-size: 1.1rem; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const productGrid = document.getElementById('productGrid');
+    
+    if (searchInput && productGrid) {
+        const cards = productGrid.getElementsByClassName('product-card');
+
+        searchInput.addEventListener('keyup', function(e) {
+            const term = e.target.value.toLowerCase();
+            
+            Array.from(cards).forEach(function(card) {
+                const name = card.getAttribute('data-name');
+                const brand = card.getAttribute('data-marca');
+                
+                if (name.includes(term) || brand.includes(term)) {
+                    card.style.display = "flex";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    }
+</script>
+{% endblock %}
