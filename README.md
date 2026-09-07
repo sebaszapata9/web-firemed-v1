@@ -44,3 +44,11 @@ La siguiente es una página web catálogo para la empresa FIREMED, que contendr�
 
 1. copiar toda la carpeta templates y static de archivo demo
 2. modificar colores del css a colores de marca firemed (#e60000 y #24a803)
+3. incorporar nuevos modelos en la lógica de negocio del sitio web
+4. validar que el producto cargado se ve correctamente
+
+## pasos a seguir
+1. incorporar el catálogo completo
+2. ajustar lógicas de negocio en landing, base, item y catalogo
+3. hacer prueba de navegación
+4. desplegar en producción
