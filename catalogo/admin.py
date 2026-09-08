@@ -4,7 +4,7 @@ from .models import Category, ProductoServicio, Negocio
 # Register your models here.
 
 class ProductoServicioAdmin(admin.ModelAdmin):
-  list_display = ("nombre", "marca", "precio", "stock",)
+  list_display = ("nombre", "marca", "precio", "stock","sku")
   search_fields = ('nombre', 'marca')
   list_filter = ('stock_activo', 'marca')
   prepopulated_fields = {'slug': ('nombre',)}  # Autocompletar el slug

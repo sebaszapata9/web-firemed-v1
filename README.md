@@ -49,6 +49,6 @@ La siguiente es una página web catálogo para la empresa FIREMED, que contendr�
 
 ## pasos a seguir
 1. incorporar el catálogo completo (convertirlo a query set y cargar todo excepto img y pdf)
-2. ajustar lógicas de negocio en landing, base, item y catalogo (landing debe mostrar hero, marcas representadas (con botones y en orden alfabético, en base a las marcas que tienen stock disponible), y tambien categorías de productos), (el catalogo de productos debe teber filtros de marcas y categorías, así como tambien barra de búsqueda)
+2. ajustar lógicas de negocio en landing, base, item y catalogo (landing debe mostrar hero, marcas representadas (con botones y en orden alfabético, en base a las marcas que tienen stock disponible), y tambien categorías de productos), (el catalogo de productos debe tener filtros de marcas y categorías, así como tambien barra de búsqueda)
 3. hacer prueba de navegación
 4. desplegar en producción (validar si se puede subir a hosting)
