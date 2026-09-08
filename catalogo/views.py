@@ -1,6 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Negocio, ProductoServicio, Category
 
+def landing(request):
+  data_negocio = Negocio.objects.first()
+  productos = ProductoServicio.objects.filter(stock_activo=True, stock__gt=0)
+  contexto = {
+      'data_negocio': data_negocio,
+      'items': productos,
+  }
+  return render(request, 'landing.html', contexto)
+
+
+
 
 def lista_items(request):
   # Capturamos la categoría enviada por URL (ej: /catalogo/?categoria=gaming)
@@ -24,15 +35,6 @@ def lista_items(request):
   # Renderizado directo con el nombre de template exacto
   return render(request, 'catalogo.html', contexto)
 
-
-def landing(request):
-  data_negocio = Negocio.objects.first()
-  data_categorias = Category.objects.values_list('name', flat=True).distinct()
-  contexto = {
-      'data_negocio': data_negocio,
-      'data_categorias': data_categorias,
-  }
-  return render(request, 'landing.html', contexto)
 
 
 def detalle_item(request, slug):

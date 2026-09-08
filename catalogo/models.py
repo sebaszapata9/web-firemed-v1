@@ -45,8 +45,9 @@ class ProductoServicio(models.Model):
         verbose_name="Categoría", null=True, blank=True
     )
 	precio = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-	slug = models.SlugField(unique=True)
+	slug = models.SlugField(unique=True, auto_created=True, verbose_name="Slug URL (se llena en automático)")
 	stock = models.PositiveIntegerField()
+	sku = models.CharField(max_length=100, unique=True, verbose_name="SKU (Código de Producto)", blank=True, null=True)
 	ficha_tecnica = models.FileField(upload_to='fichas_tecnicas/', blank=True, null=True)
 	stock_activo = models.BooleanField(default=True)
 	fecha_creacion = models.DateTimeField(auto_now_add=True)
