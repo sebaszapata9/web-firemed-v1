@@ -1,9 +1,10 @@
 import pandas as pd
 from django.core.management.base import BaseCommand
-from catalogo.models import ProductoServicio  # Reemplaza con tu modelo real
+from django.utils.text import slugify
+from catalogo.models import ProductoServicio
 
 class Command(BaseCommand):
-    help = 'Carga masiva de productos desde un archivo Excel a PostgreSQL'
+    help = 'Carga masiva o actualización de productos desde un archivo Excel a PostgreSQL'
 
     def add_arguments(self, parser):
         parser.add_argument('ruta_excel', type=str, help='Ruta al archivo Excel')
@@ -16,28 +17,59 @@ class Command(BaseCommand):
             # Leer el archivo Excel usando pandas
             df = pd.read_excel(archivo)
             
-            # Opcional: limpiar valores nulos si es necesario
+            # Reemplazar valores NaN de pandas por None de Python de forma segura
             df = df.where(pd.notnull(df), None)
 
-            productos_a_crear = []
-            for _, row in df.iterrows():
-                # Mapea las columnas de tu Excel con los campos del modelo
-                productos_a_crear.append(
-                    ProductoServicio(
-                        nombre=row['Nombre'],
-                        marca=row['Marca'],
-                        descripcion=row['Descripción'],
-                        categoria_item=row['Categoría'],  # Asegúrate de que esta columna exista en tu Excel
-                        precio=row['Precio'],
-                        stock=row['Stock'],
-                        sku=row['SKU']
-                    )
-                )
-
-            # bulk_create inserta todos los objetos en bloque (muy eficiente en PostgreSQL)
-            ProductoServicio.objects.bulk_create(productos_a_crear, ignore_conflicts=True)
+            contador_procesados = 0
             
-            self.stdout.write(self.style.SUCCESS(f'¡Se cargaron {len(productos_a_crear)} productos exitosamente!'))
+            for index, row in df.iterrows():
+                # Función auxiliar para limpiar strings que puedan venir como None
+                def limpiar(val):
+                    if val is None or str(val).strip() == '' or str(val).lower() == 'nan':
+                        return ''
+                    return str(val).strip()
+
+                nombre = limpiar(row.get('Nombre'))
+                sku = limpiar(row.get('SKU'))
+
+                # Omitir filas totalmente vacías o sin SKU
+                if not nombre and not sku:
+                    continue
+
+                if not sku:
+                    self.stdout.write(self.style.WARNING(f"Fila {index + 2}: Omitida por no tener SKU."))
+                    continue
+
+                # Generar slug seguro evitando que se corte el SKU
+                base_slug = slugify(nombre)
+                espacio_para_nombre = 50 - len(str(sku)) - 1
+                base_slug_recortado = base_slug[:espacio_para_nombre]
+                slug_final = f"{base_slug_recortado}-{sku}" if sku else base_slug[:50]
+
+                # Stock: asegurarnos de que sea numérico o 0 por defecto
+                stock_val = row.get('Stock')
+                try:
+                    stock = int(stock_val) if stock_val is not None and str(stock_val).lower() != 'nan' else 0
+                except (ValueError, TypeError):
+                    stock = 0
+
+                # Usamos update_or_create buscando por SKU
+                ProductoServicio.objects.update_or_create(
+                    sku=sku,
+                    defaults={
+                        'nombre': nombre,
+                        'marca': limpiar(row.get('Marca')),
+                        'descripcion': limpiar(row.get('Descripción')),
+                        'stock': stock,
+                        'slug': slug_final
+                    }
+                )
+                contador_procesados += 1
+
+            if contador_procesados > 0:
+                self.stdout.write(self.style.SUCCESS(f'¡Se procesaron {contador_procesados} productos exitosamente!'))
+            else:
+                self.stdout.write(self.style.WARNING('No se encontraron registros válidos para procesar en el Excel.'))
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Error al procesar el archivo: {e}'))

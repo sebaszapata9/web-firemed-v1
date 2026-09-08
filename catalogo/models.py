@@ -23,7 +23,7 @@ class Negocio(models.Model):
 	nombre = models.CharField(max_length=255)
 	descripcion = models.TextField()
 	direccion = models.CharField(max_length=255)
-	telefono = models.CharField(max_length=20)
+	telefono = models.CharField(max_length=20, verbose_name="Teléfono de contacto (colocar con código de país, ej: 51987654321)")
 	correo_electronico = models.EmailField()
 	logo = models.ImageField(upload_to='logos/', blank=True, null=True)
 	fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -45,7 +45,7 @@ class ProductoServicio(models.Model):
         verbose_name="Categoría", null=True, blank=True
     )
 	precio = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-	slug = models.SlugField(unique=True, auto_created=True, verbose_name="Slug URL (se llena en automático)")
+	slug = models.SlugField(max_length=255, unique=True, auto_created=True, verbose_name="Slug URL (se llena en automático)")
 	stock = models.PositiveIntegerField()
 	sku = models.CharField(max_length=100, unique=True, verbose_name="SKU (Código de Producto)", blank=True, null=True)
 	ficha_tecnica = models.FileField(upload_to='fichas_tecnicas/', blank=True, null=True)
