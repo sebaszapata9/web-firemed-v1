@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, ProductoServicio, Negocio
+from .models import Categoria, ProductoServicio, Negocio
 
 # Register your models here.
 
@@ -16,7 +16,7 @@ class NegocioAdmin(admin.ModelAdmin):
   
 admin.site.register(Negocio, NegocioAdmin)
 
-class CategoryAdmin(admin.ModelAdmin):
-  list_display = ("name", "slug")
+class CategoriaAdmin(admin.ModelAdmin):
+  list_display = ("nombre", "slug")
   
-admin.site.register(Category, CategoryAdmin)
+admin.site.register(Categoria, CategoriaAdmin)

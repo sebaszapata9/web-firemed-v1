@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'firemed_web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'catalogo_db_firemed',       # El nombre de la base de datos que creaste
+        'NAME': 'catalogo_db_firemed_1',       # El nombre de la base de datos que creaste
         'USER': 'postgres',          # Tu usuario de PostgreSQL
         'PASSWORD': 'gelatina',   # Tu contraseña
         'HOST': 'localhost',         # O la IP del servidor si está en la nube
