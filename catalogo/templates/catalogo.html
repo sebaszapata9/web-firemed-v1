@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Catálogo | FIREMED{% endblock %}
+
+{% block content %}
+<section class="catalog-hero">
+    <div class="container">
+        <span class="eyebrow">Equipamiento FIREMED</span>
+        <h1>Catálogo</h1>
+        <p class="hero-lead">Encuentra equipos de protección, rescate y seguridad para empresas, minería y brigadas de emergencia.</p>
+    </div>
+</section>
+
+<section class="section-tight">
+    <div class="container">
+        <div class="catalog-layout">
+            <aside class="filters" aria-label="Filtros del catálogo">
+                <form method="get">
+                    <div class="filter-group">
+                        <label class="filter-label" for="categoria">Categoría</label>
+                        <select class="filter-select" id="categoria" name="categoria" onchange="this.form.submit()">
+                            <option value="">Todas las categorías</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.slug }}" {% if categoria_actual == categoria.slug %}selected{% endif %}>
+                                    {{ categoria.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label" for="marca">Marca</label>
+                        <select class="filter-select" id="marca" name="marca" onchange="this.form.submit()">
+                            <option value="">Todas las marcas</option>
+                            {% for marca in marcas %}
+                                <option value="{{ marca }}" {% if marca_actual == marca %}selected{% endif %}>
+                                    {{ marca }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% if categoria_actual or marca_actual or busqueda_actual %}
+                        <div class="filter-group">
+                            <a class="btn btn-secondary" href="{% url 'catalogo' %}" style="width:100%;">Limpiar filtros</a>
+                        </div>
+                    {% endif %}
+                </form>
+            </aside>
+
+            <div class="catalog-results">
+                <div class="catalog-toolbar">
+                    <form class="search-box" method="get" role="search">
+                        {% if categoria_actual %}<input type="hidden" name="categoria" value="{{ categoria_actual }}">{% endif %}
+                        {% if marca_actual %}<input type="hidden" name="marca" value="{{ marca_actual }}">{% endif %}
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="m20 20-4-4"></path>
+                        </svg>
+                        <label class="visually-hidden" for="busqueda">Buscar productos</label>
+                        <input class="search-input" id="busqueda" name="q" type="search" value="{{ busqueda_actual }}" placeholder="Buscar por producto, marca o SKU...">
+                    </form>
+                    <span class="catalog-count">{{ data_productos|length }} producto{{ data_productos|length|pluralize }}{% if busqueda_actual %} encontrado{{ data_productos|length|pluralize }}{% endif %}</span>
+                </div>
+
+                {% if data_productos %}
+                    <div class="product-grid">
+                        {% for producto in data_productos %}
+                            <article class="product-card">
+                                <a href="{% url 'detalle_item' producto.slug %}" class="product-image-wrap" aria-label="Ver {{ producto.nombre }}">
+                                    {% if producto.imagen %}
+                                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" loading="lazy">
+                                    {% else %}
+                                        <span class="product-image-placeholder">FIREMED</span>
+                                    {% endif %}
+                                </a>
+
+                                <div class="product-card-body">
+                                    {% if producto.marca %}
+                                        <div class="product-brand">{{ producto.marca }}</div>
+                                    {% endif %}
+                                    <h3><a href="{% url 'detalle_item' producto.slug %}">{{ producto.nombre }}</a></h3>
+
+                                    <div class="product-card-footer">
+                                        <span class="stock-badge stock-badge-available">
+                                            <span class="status-dot"></span>
+                                            Stock: {{ producto.stock }} unidades
+                                        </span>
+                                        <a href="{% url 'detalle_item' producto.slug %}" class="product-link">Ver producto →</a>
+                                    </div>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <span class="eyebrow">Sin resultados</span>
+                        <h2>No encontramos equipos con esos criterios</h2>
+                        <p>Prueba con otra búsqueda o revisa las categorías y marcas disponibles.</p>
+                        <a class="btn btn-primary" href="{% url 'catalogo' %}">Ver todo el catálogo</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
