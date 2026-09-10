@@ -63,3 +63,13 @@ def detalle_item(request, slug):
       'data_negocio': data_negocio,
   }
   return render(request, 'item.html', contexto)
+
+def base_views(request, slug):
+  # Usamos get_object_or_404 para evitar errores si el slug no existe
+  item = get_object_or_404(ProductoServicio, slug=slug)
+  data_negocio = Negocio.objects.first()
+  contexto = {
+      'item': item,
+      'data_negocio': data_negocio,
+  }
+  return render(request, 'base.html', contexto)
