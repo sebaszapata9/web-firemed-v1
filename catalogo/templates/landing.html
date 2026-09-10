@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FIREMED | Equipos de rescate y seguridad{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <span class="eyebrow">Equipamiento para respuesta y emergencia</span>
+            <h1>Equipos de seguridad y rescate para quienes están preparados para responder.</h1>
+            <p class="hero-lead">
+                Soluciones de equipamiento para empresas, minería y brigadas de emergencia.
+                Encuentra el equipo que necesitas, revisa su disponibilidad y consulta directamente con nuestro equipo.
+            </p>
+            <div class="hero-actions">
+                <a href="{% url 'catalogo' %}" class="btn btn-primary">Explorar catálogo</a>
+                {% if data_negocio and data_negocio.telefono %}
+                    <a href="https://wa.me/{{ data_negocio.telefono }}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
+                {% endif %}
+            </div>
+            <div class="hero-proof" aria-label="Experiencia FIREMED">
+                <span><strong>+15</strong> años de experiencia</span>
+                <span><strong>Marcas</strong> reconocidas</span>
+                <span><strong>Empresas</strong> públicas y privadas</span>
+            </div>
+        </div>
+
+        <div class="hero-media">
+            <img src="{% static 'img/hero-landing.jpg' %}" alt="Equipamiento FIREMED para rescate y seguridad">
+            <div class="hero-media-badge">
+                <span class="status-dot"></span>
+                Equipos disponibles en catálogo
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-categories" id="categorias">
+    <div class="container">
+        <div class="section-heading section-heading-row">
+            <div>
+                <span class="eyebrow">Encuentra lo que necesitas</span>
+                <h2>Explora por categoría</h2>
+            </div>
+            <a href="{% url 'catalogo' %}" class="text-link">Ver todo el catálogo <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="category-grid">
+            {% for categoria in data_categorias %}
+                <a href="{% url 'catalogo' %}?categoria={{ categoria|slugify }}" class="category-card">
+                    <span class="category-number">{{ forloop.counter|stringformat:'02d' }}</span>
+                    <div>
+                        <h3>{{ categoria }}</h3>
+                        <span>Ver equipos <span aria-hidden="true">→</span></span>
+                    </div>
+                </a>
+            {% empty %}
+                <div class="empty-state">
+                    <p>Las categorías estarán disponibles próximamente.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section-products" id="productos-destacados">
+    <div class="container">
+        <div class="section-heading section-heading-row">
+            <div>
+                <span class="eyebrow">Disponibilidad actual</span>
+                <h2>Equipos destacados</h2>
+                <p>Consulta productos disponibles y revisa su información técnica antes de contactarnos.</p>
+            </div>
+            <a href="{% url 'catalogo' %}" class="text-link">Ver catálogo completo <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="product-grid product-grid-featured">
+            {% for producto in data_productos|slice:':6' %}
+                <article class="product-card">
+                    <a href="{% url 'detalle_item' producto.slug %}" class="product-image-wrap">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" loading="lazy">
+                        {% else %}
+                            <div class="product-image-placeholder">FIREMED</div>
+                        {% endif %}
+                    </a>
+                    <div class="product-card-body">
+                        {% if producto.marca %}<span class="product-brand">{{ producto.marca }}</span>{% endif %}
+                        <h3><a href="{% url 'detalle_item' producto.slug %}">{{ producto.nombre }}</a></h3>
+                        <div class="product-card-footer">
+                            <span class="stock-badge stock-badge-available"><span class="status-dot"></span> Stock disponible</span>
+                            <a href="{% url 'detalle_item' producto.slug %}" class="product-link">Ver producto <span aria-hidden="true">→</span></a>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-state">
+                    <p>No hay productos disponibles para mostrar.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section trust-section" id="nosotros">
+    <div class="container trust-grid">
+        <div class="trust-copy">
+            <span class="eyebrow">FIREMED</span>
+            <h2>Experiencia que acompaña decisiones de compra críticas.</h2>
+            <p>
+                Durante más de 15 años hemos trabajado con empresas privadas y entidades públicas
+                que necesitan equipamiento confiable para seguridad, rescate y respuesta ante emergencias.
+            </p>
+            <p>
+                Representamos importantes marcas del mercado y contamos con experiencia atendiendo
+                organizaciones como el Cuerpo de Bomberos del Perú.
+            </p>
+            <a href="{% url 'catalogo' %}" class="btn btn-primary">Conocer nuestro catálogo</a>
+        </div>
+
+        <div class="trust-stats">
+            <div class="trust-stat">
+                <strong>+15</strong>
+                <span>Años de experiencia</span>
+            </div>
+            <div class="trust-stat">
+                <strong>Marcas</strong>
+                <span>Reconocidas en el mercado</span>
+            </div>
+            <div class="trust-stat">
+                <strong>Público + privado</strong>
+                <span>Experiencia comercial</span>
+            </div>
+            <div class="trust-stat">
+                <strong>Bomberos</strong>
+                <span>Experiencia con Cuerpo de Bomberos del Perú</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if data_marcas %}
+<section class="section brands-section">
+    <div class="container">
+        <div class="section-heading section-heading-centered">
+            <span class="eyebrow">Marcas con las que trabajamos</span>
+            <h2>Equipamiento de fabricantes reconocidos</h2>
+        </div>
+        <div class="brands-list" aria-label="Marcas disponibles">
+            {% for marca in data_marcas %}
+                <span class="brand-chip">{{ marca }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section final-cta-section">
+    <div class="container">
+        <div class="final-cta">
+            <div>
+                <span class="eyebrow eyebrow-light">¿Ya sabes qué equipo necesitas?</span>
+                <h2>Encuéntralo en el catálogo y conversemos.</h2>
+                <p>Revisa disponibilidad, descarga la ficha técnica y solicita información por WhatsApp.</p>
+            </div>
+            <div class="final-cta-actions">
+                <a href="{% url 'catalogo' %}" class="btn btn-light">Explorar catálogo</a>
+                {% if data_negocio and data_negocio.telefono %}
+                    <a href="https://wa.me/{{ data_negocio.telefono }}" class="btn btn-outline-light" target="_blank" rel="noopener noreferrer">Hablar por WhatsApp</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
