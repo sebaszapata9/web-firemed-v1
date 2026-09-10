@@ -39,6 +39,7 @@ button,select{cursor:pointer}
 .container{width:min(calc(100% - 40px),var(--container));margin-inline:auto}
 .skip-link{position:fixed;top:-100px;left:20px;z-index:1000;padding:10px 14px;border-radius:var(--radius-sm);background:var(--color-ink);color:#fff}
 .skip-link:focus{top:20px}
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 h1,h2,h3,p{margin-top:0}
 h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.05}
 h1{margin-bottom:20px;font-size:clamp(2.6rem,5vw,4.5rem);font-weight:700}
